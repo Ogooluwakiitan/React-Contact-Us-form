@@ -55,7 +55,7 @@ input[type=text]:focus {
     border: 1px solid lightseagreen;
   }
 
-  input[type=email]:focus {
+  input[type=email], textarea:focus {
     border: 1px solid lightseagreen;
   }
 
@@ -78,6 +78,20 @@ input[type=text]:focus {
     color: red;
     font-size: 14px;
     margin-top: 2px;
+  }
+
+  .info-error-msg {
+    color: red;
+    font-size: 18px;
+    margin-top: 2px;
+  }
+
+  textarea {
+    width: 250px;
+    height: 50px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid gray;
   }
 
   button {

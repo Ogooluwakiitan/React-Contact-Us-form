@@ -1,51 +1,69 @@
-import { useState} from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import "../styles/app.css";
+import { nanoid } from "nanoid";
+import axios from "axios";
+
+// const initialValues = {
+//     id: nanoid(),
+//     name: "",
+//     email: "",
+//     subject: "",
+//     message: "",
+// }
+
+// console.log(initialValues)
 
 const ContactForm = () => {
-
   const [successMsg, setSuccessMsg] = useState("");
-  // const [errorMsg, setErrorMsg] = useState(true)
+  const [errorMsg, setErrorMsg] = useState("");
 
   const {
     register,
     handleSubmit,
-    formState: { errors }, reset 
+    formState: { errors },
+    reset,
   } = useForm();
 
-  // const { reset } = useForm();
-  // reset({
-  //   name: "",
-  //   email: "",
-  //   subject: "",
-  //   message: ""
-  // })
-
   const onSubmit = (data) => {
-    console.log(data);
-    setSuccessMsg("User registration is successful.");
+    const formData = { ...data, id: nanoid() };
+    // console.log(data);
+    axios
+      .post(
+        "https://my-json-server.typicode.com/tundeojediran/contacts-api-server/inquiries",
+        { formData }
+      )
+      .then((response) => {
+        console.log(response);
+        setSuccessMsg("User Submission is successful.");
+        setErrorMsg("");
+      })
+      .catch(() => {
+        setSuccessMsg("");
+        setErrorMsg("User Submission was not successful!! ");
+      });
+
     reset();
-    // setErrorMsg(false)
   };
 
   return (
     <div className="container">
       <form onSubmit={handleSubmit(onSubmit)}>
-      {successMsg && <p className="success-msg">{successMsg}</p>}
-      {/* {!errorMsg && <p>User Submission is not successful.</p>} */}
+        {successMsg && <p className="success-msg">{successMsg}</p>}
+        {errorMsg && <p className="info-error-msg">{errorMsg}</p>}
         <div className="input-field">
           <label htmlFor="name">Name</label>
           <input
             type="text"
-            name='name'
-            {...register("name", { required: "Name is required", 
-          pattern: {
-            message: "Name is required."
-          } })}
+            name="name"
+            {...register("name", {
+              required: "Name is required",
+              pattern: {
+                message: "Name is required.",
+              },
+            })}
           />
-          {errors.name && 
-            <p className="errorMsg">{errors.name.message}</p>
-          }
+          {errors.name && <p className="errorMsg">{errors.name.message}</p>}
         </div>
         <div className="input-field">
           <label htmlFor="email">Email</label>
@@ -56,13 +74,11 @@ const ContactForm = () => {
               required: "Email is required.",
               pattern: {
                 value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                message: "Email is not valid."
-              }
+                message: "Email is not valid.",
+              },
             })}
           />
-          {errors.email &&
-            <p className="errorMsg">{errors.email.message}</p>
-          }
+          {errors.email && <p className="errorMsg">{errors.email.message}</p>}
         </div>
         <div className="input-field">
           <label htmlFor="subject">Subject</label>
@@ -71,27 +87,25 @@ const ContactForm = () => {
 
         <div className="input-field">
           <label htmlFor="feedback">Message</label>
-          <input
-            type="text"
-            name='feedback'
-            {...register("feedback", { required: "Message is required.",
-          pattern: {
-            message: "Message is required."
-          } })}
-          />
-           {errors.feedback && 
+          <textarea
+            rows="4"
+            cols="50"
+            placeholder="Enter your Message"
+            {...register("feedback", {
+              required: "Message is required.",
+              pattern: {
+                message: "Message is required.",
+              },
+            })}
+          ></textarea>
+          {errors.feedback && (
             <p className="errorMsg">{errors.feedback.message}</p>
-          }
+          )}
         </div>
 
-        {/* <div className="input-field">
-          <label>Message</label>
-          <textarea placeholder="Enter your Message"></textarea>
-        </div> */}
-
-       <div className="input-field">
-       <button type="submit" >Submit</button>
-       </div>
+        <div className="input-field">
+          <button type="submit">Submit</button>
+        </div>
       </form>
     </div>
   );
